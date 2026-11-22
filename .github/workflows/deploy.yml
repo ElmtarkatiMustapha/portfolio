@@ -1,0 +1,40 @@
+name: Deploy to Render
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: render-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    # Disabled until the owner explicitly enables deployments later.
+    if: >-
+      vars.ENABLE_RENDER_DEPLOY == 'true' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Trigger deployment of the commit that passed CI
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          COMMIT_SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "Configure the RENDER_DEPLOY_HOOK_URL secret before enabling deployment."
+            exit 1
+          fi
+          case "$DEPLOY_HOOK" in
+            https://api.render.com/deploy/*) ;;
+            *) echo "Expected a Render deploy hook URL."; exit 1 ;;
+          esac
+          if [[ "$DEPLOY_HOOK" == *\?* ]]; then separator='&'; else separator='?'; fi
+          curl --fail --silent --show-error --output /dev/null --max-time 60 \
+            --request POST "${DEPLOY_HOOK}${separator}ref=${COMMIT_SHA}"
+          echo "Render accepted a deployment request for ${COMMIT_SHA}. Check Render for build and live status."

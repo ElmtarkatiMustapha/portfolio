@@ -1,0 +1,57 @@
+name: CI
+on:
+  push:
+    branches: [main, dev, 'feature/**', 'features/**']
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-test-results
+          path: test-results
+      - uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-dist
+          path: dist
+  docker:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Compose
+        run: docker compose config --quiet
+      - name: Build and start production container
+        run: docker compose up -d --build web
+      - name: Check health, page, and original artwork
+        run: |
+          curl --fail --retry 20 --retry-delay 3 --retry-connrefused http://localhost:8080/health
+          curl --fail http://localhost:8080/ | grep 'Mustapha El Mtarkati'
+          curl --fail -o /dev/null http://localhost:8080/images/hero.png
+          curl --fail -o /dev/null http://localhost:8080/images/payroll.svg
+      - name: Container logs
+        if: failure()
+        run: docker compose logs web
+      - name: Stop containers
+        if: always()
+        run: docker compose down

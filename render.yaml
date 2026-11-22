@@ -1,0 +1,14 @@
+# Prepared only. Importing this Blueprint later can create a live service.
+services:
+  - type: web
+    name: mustapha-portfolio
+    runtime: docker
+    repo: https://github.com/ElmtarkatiMustapha/portfolio
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeployTrigger: off
+    envVars:
+      - key: PORT
+        value: "10000"

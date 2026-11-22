@@ -1,0 +1,24 @@
+services:
+  web:
+    build:
+      context: .
+      target: production
+    ports:
+      - "8080:10000"
+    environment:
+      PORT: "10000"
+    restart: unless-stopped
+  dev:
+    profiles: [dev]
+    build:
+      context: .
+      target: development
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - dev_dependencies:/app/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+volumes:
+  dev_dependencies:

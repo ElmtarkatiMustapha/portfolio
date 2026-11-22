@@ -1,0 +1,83 @@
+export type Language = 'en' | 'fr'
+export const profile = {
+  name: 'Mustapha El Mtarkati', email: 'Mustapha.elmterkati8@gmail.com',
+  phone: '+212 6 53 70 71 31', github: 'https://github.com/ElmtarkatiMustapha',
+  linkedin: 'https://www.linkedin.com/in/mustapha-el-mtarkati',
+}
+export const copy = {
+  en: {
+    nav: ['Work', 'About', 'Experience', 'Contact'], connect: 'Let’s talk', skip: 'Skip to content',
+    eyebrow: 'FULL-STACK DEVELOPER · CASABLANCA, MOROCCO',
+    hero: ['Thoughtful code.', 'Meaningful impact.'],
+    intro: 'I’m Mustapha. I build web experiences that connect considered interfaces with reliable systems. And I help others learn to do the same.',
+    workCta: 'Explore my work', contactCta: 'Get in touch', scroll: 'SCROLL TO EXPLORE',
+    workLabel: 'SELECTED WORK', workTitle: 'Ideas, brought to life.',
+    workIntro: 'A selection of projects where practical problems meet full-stack thinking.',
+    all: 'All projects', apps: 'Web applications', web3: 'Web3', code: 'View repository', concept: 'Original concept illustration',
+    aboutLabel: 'A LITTLE ABOUT ME', aboutTitle: 'A builder at heart.\nA teacher by nature.',
+    about: 'I’m a full-stack developer based in Casablanca, Morocco. My work spans web applications, blockchain, and generative AI tools — connected by a curiosity for learning and a love of building useful things.',
+    about2: 'Today, I also teach JavaScript at Simplon. I enjoy making complex ideas approachable, collaborating with a team, and turning a real need into software that works.',
+    skillsLabel: 'MY TOOLKIT', skillsTitle: 'From interface to infrastructure.',
+    expLabel: 'THE JOURNEY', expTitle: 'Building. Learning. Sharing.', present: 'Present',
+    education: 'Education & certifications',
+    contactLabel: 'LET’S CONNECT', contactTitle: 'Have something\nin mind?',
+    contactText: 'A project, a full-stack opportunity, or a conversation about technology. I’d love to hear from you.',
+    email: 'Send me an email', location: 'Based in Casablanca, Morocco', phone: 'Call',
+    footer: 'Built with React, curiosity & care.', back: 'Back to top', language: 'Select language',
+  },
+  fr: {
+    nav: ['Projets', 'À propos', 'Parcours', 'Contact'], connect: 'Discutons', skip: 'Aller au contenu',
+    eyebrow: 'DÉVELOPPEUR FULL-STACK · CASABLANCA, MAROC',
+    hero: ['Du code réfléchi.', 'Un impact concret.'],
+    intro: 'Moi, c’est Mustapha. Je crée des expériences web qui allient interfaces soignées et systèmes fiables. Et j’aide les autres à en faire autant.',
+    workCta: 'Découvrir mes projets', contactCta: 'Me contacter', scroll: 'DÉCOUVRIR LA SUITE',
+    workLabel: 'PROJETS CHOISIS', workTitle: 'Des idées qui prennent vie.',
+    workIntro: 'Une sélection de projets où les besoins concrets rencontrent une approche full-stack.',
+    all: 'Tous les projets', apps: 'Applications web', web3: 'Web3', code: 'Voir le dépôt', concept: 'Illustration conceptuelle originale',
+    aboutLabel: 'QUELQUES MOTS SUR MOI', aboutTitle: 'Créer par passion.\nTransmettre par envie.',
+    about: 'Développeur full-stack basé à Casablanca, au Maroc, j’explore les applications web, la blockchain et les outils d’IA générative, avec la même curiosité d’apprendre et de construire des solutions utiles.',
+    about2: 'Aujourd’hui, je suis aussi formateur JavaScript chez Simplon. J’aime rendre les idées complexes accessibles, travailler en équipe et transformer un besoin réel en un logiciel fonctionnel.',
+    skillsLabel: 'MES OUTILS', skillsTitle: 'De l’interface à l’infrastructure.',
+    expLabel: 'MON PARCOURS', expTitle: 'Créer. Apprendre. Transmettre.', present: 'Aujourd’hui',
+    education: 'Formation et certifications',
+    contactLabel: 'FAISONS CONNAISSANCE', contactTitle: 'Une idée\nen tête ?',
+    contactText: 'Un projet, une opportunité full-stack ou une discussion autour de la technologie. Échangeons !',
+    email: 'M’envoyer un email', location: 'Basé à Casablanca, Maroc', phone: 'Appeler',
+    footer: 'Créé avec React, curiosité et soin.', back: 'Retour en haut', language: 'Choisir la langue',
+  },
+}
+export const projects = [
+  { id: 'payroll-system', name: 'SRT Payroll', category: 'apps', image: 'payroll', tags: ['React', 'Laravel', 'MySQL', 'Docker'],
+    en: { kind: 'PAYROLL MANAGEMENT', description: 'A multilingual daily payroll system. Employee management, salary history, advances, and printable statements in one place.' },
+    fr: { kind: 'GESTION DE PAIE', description: 'Une gestion de paie journalière multilingue : salariés, historique des salaires, avances et relevés imprimables.' } },
+  { id: 'babdigi', name: 'BabDigi', category: 'web3', image: 'babdigi', tags: ['React', 'Node.js', 'Solidity', 'IPFS'],
+    en: { kind: 'BLOCKCHAIN · DOCUMENT VERIFICATION', description: 'A document certification platform connecting institutions and citizens through blockchain verification and secure digital wallets.' },
+    fr: { kind: 'BLOCKCHAIN · VÉRIFICATION DOCUMENTAIRE', description: 'Une plateforme de certification documentaire reliant institutions et citoyens grâce à la blockchain et aux portefeuilles numériques sécurisés.' } },
+  { id: 'PosSystemDocker', name: 'WebStock', category: 'apps', image: 'pos', tags: ['React', 'Laravel', 'MySQL', 'Docker'],
+    en: { kind: 'POINT OF SALE · INVENTORY', description: 'A point-of-sale and stock management application with role-based access, sales, purchases, returns, and receipt printing.' },
+    fr: { kind: 'POINT DE VENTE · STOCK', description: 'Une application de caisse et de gestion des stocks : accès par rôle, ventes, achats, retours et impression de reçus.' } },
+  { id: 'gymApp', name: 'gymApp', category: 'apps', image: 'gym', tags: ['JavaScript', 'Bootstrap'],
+    en: { kind: 'FITNESS · WEB APPLICATION', description: 'A fitness-focused web application exploring an approachable interface for a gym experience.' },
+    fr: { kind: 'FITNESS · APPLICATION WEB', description: 'Une application web autour du fitness, explorant une interface accessible pour l’univers d’une salle de sport.' } },
+]
+export const skillGroups = [
+  { en: 'Frontend', fr: 'Frontend', icon: 'code', skills: ['React', 'Vue.js', 'TypeScript', 'JavaScript', 'Vite'] },
+  { en: 'Backend & data', fr: 'Backend et données', icon: 'database', skills: ['Node.js', 'Express', 'Laravel', 'PHP', 'Python', 'MySQL', 'MongoDB', 'PostgreSQL'] },
+  { en: 'Blockchain & AI', fr: 'Blockchain et IA', icon: 'layers', skills: ['Solidity', 'Ethereum', 'Ethers.js', 'IPFS', 'Prompt engineering', 'RAG'] },
+  { en: 'Delivery & quality', fr: 'Déploiement et qualité', icon: 'box', skills: ['Docker', 'AWS', 'GitHub Actions', 'Git', 'Jest', 'REST APIs', 'Agile Scrum'] },
+]
+export const experience = [
+  { company: 'Simplon', date: '14.09.2026', end: null, en: ['JavaScript Trainer', 'Teaching JavaScript and sharing practical web development skills.'], fr: ['Formateur JavaScript', 'Enseignement de JavaScript et transmission de compétences pratiques en développement web.'] },
+  { company: 'Akkodis', date: '02.2026', end: null, en: ['Software Engineering Intern', 'Designed BabDigi with React, Node.js, Solidity, and IPFS. Implemented automated testing and Docker-based CI/CD in an Agile team.'], fr: ['Stagiaire en génie logiciel', 'Conception de BabDigi avec React, Node.js, Solidity et IPFS. Tests automatisés et CI/CD avec Docker au sein d’une équipe Agile.'] },
+  { company: 'UNVCAM SARL', date: '08.2023', end: '09.2025', en: ['Web Developer & POS Systems Lead', 'Built custom web and point-of-sale applications. Supervised on-site installation and maintenance of POS solutions.'], fr: ['Développeur web et responsable systèmes POS', 'Développement d’applications web et de caisse sur mesure. Supervision de l’installation et de la maintenance des solutions POS.'] },
+  { company: 'NOURINFO', date: '10.2022', end: '07.2023', en: ['Freelance Full-Stack Developer', 'Developed stock management applications with PHP and Laravel, collaborating remotely with the technical team.'], fr: ['Développeur full-stack freelance', 'Développement d’applications de gestion de stock avec PHP et Laravel, en collaboration à distance avec l’équipe technique.'] },
+  { company: 'AYMD AGENCY', date: '10.2021', end: '06.2022', en: ['Full-Stack Developer Intern', 'Created and customized WordPress and WooCommerce websites, including contributions to the agency’s own website.'], fr: ['Stagiaire développeur full-stack', 'Création et personnalisation de sites WordPress et WooCommerce, et contribution au site de l’agence.'] },
+  { company: 'LUXACOM', date: '05.2021', end: '07.2021', en: ['Multimedia Design Intern', 'Created visual and graphic materials while developing skills in design and color.'], fr: ['Stagiaire créateur multimédia', 'Réalisation de supports visuels et graphiques et apprentissage du design et de la colorimétrie.'] },
+]
+export const education = [
+  { school: 'USMBA · FP Taza', date: '2024–2026', en: 'Master’s · Intelligent & Mobile Systems', fr: 'Master · Systèmes intelligents et mobiles' },
+  { school: 'ENS Rabat', date: '2022–2023', en: 'Professional Bachelor’s · Multimedia & Web Technologies', fr: 'Licence professionnelle · Technologies du multimédia et web' },
+  { school: 'Lycée technique Taza', date: '2019–2021', en: 'BTS · Multimedia & Web Design', fr: 'BTS · Multimédia et conception web' },
+  { school: 'edX · IBM', date: '2024', en: 'Certificate · React Front-End Development', fr: 'Certificat · React Front-End Development' },
+  { school: 'EPFL', date: '2023', en: 'Certificate · Object-Oriented Programming', fr: 'Certificat · Programmation orientée objet' },
+]
