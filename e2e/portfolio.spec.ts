@@ -7,7 +7,12 @@ test('responsive bilingual portfolio and project navigation', async ({ page }, t
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Thoughtful code.')
   await page.locator('.hero-art img').evaluate((image: HTMLImageElement) => image.decode())
   await expect(page.locator('body')).toHaveJSProperty('scrollWidth', await page.locator('body').evaluate(el => el.clientWidth))
-  await page.screenshot({ path: testInfo.outputPath('home.png'), fullPage: true })
+  for (const image of await page.locator('.project-image img').all()) {
+    await image.scrollIntoViewIfNeeded()
+    await image.evaluate((element: HTMLImageElement) => element.decode())
+  }
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
+  await page.screenshot({ path: testInfo.outputPath('home.png'), fullPage: testInfo.project.name === 'desktop' })
   await page.getByRole('button', { name: 'FR', exact: true }).click()
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Du code réfléchi.')
