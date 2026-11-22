@@ -31,6 +31,8 @@ docker compose up --build -d web
 
 Production preview: http://localhost:8080. Health endpoint: `/health`.
 
+On Windows, if Docker reports a missing `dockerDesktopLinuxEngine` pipe, first start Docker Desktop and wait for its engine. If the `default` context is the working endpoint, use `docker --context default compose up --build -d web`.
+
 For live-reloading development:
 
 ```sh
