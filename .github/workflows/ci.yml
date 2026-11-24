@@ -1,75 +1,66 @@
-name: CI
+name: CI/CD
+
 on:
   push:
     branches: [main, dev, 'feature/**', 'features/**']
   pull_request:
     branches: [main, dev]
   workflow_dispatch:
+
 permissions:
   contents: read
+
+env:
+  IMAGE: docker.io/elmtarkati/portfolio
+
+# A new commit replaces an older run on the same branch.
 concurrency:
-  group: ci-${{ github.ref }}
+  group: pipeline-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
-  validate:
+  # 1. Check the application on every branch and pull request.
+  test:
+    name: Test and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
       - run: npm ci
-      - run: npm audit --audit-level=high
       - run: npm test
       - run: npm run build
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: browser-test-results
-          path: test-results
-      - uses: actions/upload-artifact@v4
-        with:
-          name: portfolio-dist
-          path: dist
-  docker:
-    needs: validate
+
+  # 2. Publish only from main, after the checks pass.
+  publish:
+    name: Publish Docker image
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate Compose
-        run: docker compose config --quiet
-      - name: Build and start production container
-        run: docker compose up -d --build --wait --wait-timeout 120 web
-      - name: Check health, page, and original artwork
-        run: |
-          curl --fail --retry 20 --retry-delay 3 --retry-connrefused http://localhost:8080/health
-          curl --fail http://localhost:8080/ | grep 'Mustapha El Mtarkati'
-          curl --fail -o /dev/null http://localhost:8080/images/hero.png
-          curl --fail -o /dev/null http://localhost:8080/images/payroll.svg
-      - name: Sign in to Docker Hub
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      - name: Log in to Docker Hub
         uses: docker/login-action@v4
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Publish the tested production image
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      - name: Build the production image
+        run: docker build --target production -t "${IMAGE}:latest" -t "${IMAGE}:${GITHUB_SHA}" .
+      - name: Push both image tags
+        run: docker push --all-tags "$IMAGE"
+
+  # 3. Deploy after publication, only when the owner enables it.
+  deploy:
+    name: Deploy to Render
+    needs: publish
+    if: vars.ENABLE_RENDER_DEPLOY == 'true' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Request Render deployment
         env:
-          IMAGE: docker.io/elmtarkati/portfolio
+          DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          image_id="$(docker compose images -q web)"
-          test -n "$image_id"
-          docker tag "$image_id" "${IMAGE}:${GITHUB_SHA}"
-          docker tag "$image_id" "${IMAGE}:latest"
-          docker push "${IMAGE}:${GITHUB_SHA}"
-          docker push "${IMAGE}:latest"
-          echo "Published ${IMAGE}:${GITHUB_SHA} and ${IMAGE}:latest" >> "$GITHUB_STEP_SUMMARY"
-      - name: Container logs
-        if: failure()
-        run: docker compose logs web
-      - name: Stop containers
-        if: always()
-        run: docker compose down
+          curl --fail --silent --show-error --max-time 60 --output /dev/null \
+            --get --data-urlencode "imgURL=${IMAGE}:${GITHUB_SHA}" "$DEPLOY_HOOK"

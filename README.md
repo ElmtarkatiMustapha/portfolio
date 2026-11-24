@@ -47,11 +47,25 @@ Development: http://localhost:5173. After dependency changes, refresh the develo
 - `dev`: integration branch.
 - `feature/portfolio`: initial portfolio feature branch. Create future features as `feature/<name>`.
 
-Open pull requests from feature branches into `dev`, then from `dev` into `main`. CI runs on pushes to these branches and PRs targeting `dev` or `main`: dependency audit, visitor interaction tests, TypeScript/build checks, production Docker build, and HTTP smoke checks. Configure branch protection on GitHub to require the `validate` and `docker` jobs and a PR before merging.
+Open pull requests from feature branches into `dev`, then from `dev` into `main`. The single workflow `.github/workflows/ci.yml` has three jobs, executed in order:
+
+```text
+Test and build → Publish Docker image → Deploy to Render
+```
+
+| Job | What it does | When it runs |
+| --- | --- | --- |
+| `test` | Install dependencies, run unit tests, and build the app | Pushes to the listed branches, PRs, and manual runs |
+| `publish` | Build and push the production Docker image | After successful tests, on `main`, outside PRs |
+| `deploy` | Ask Render to deploy the published image | After publication, on a push to `main`, with deployment enabled |
+
+For students: `on` defines the triggers, `jobs` groups the work, `steps` lists the commands, `needs` makes a job wait for a successful previous job, and `if` decides whether a job runs. `secrets` holds private credentials; `vars` holds non-secret settings. The concurrency block cancels an older run when a newer commit arrives on the same branch.
+
+If branch protection is enabled, require **Test and build** before merging; replace any old required `validate` or `docker` checks with this job. Browser tests (`npm run test:e2e`), dependency audits (`npm audit`), and Docker Compose previews remain available locally; the teaching pipeline keeps only unit tests, builds, publication, and optional deployment.
 
 ## Docker Hub publication
 
-The CI workflow publishes the exact production image that passed the container HTTP checks to `docker.io/elmtarkati/portfolio`. Each successful push to `main` creates two tags: the full Git commit SHA and `latest`. A manual run of **Actions → CI → Run workflow → main** also tests and publishes the image. Pull requests, `dev`, and feature branches only run checks.
+After the application checks succeed, CI builds and publishes the production image to `docker.io/elmtarkati/portfolio`. Each successful push to `main` creates two tags: the full Git commit SHA and `latest`. A manual run of **Actions → CI/CD → Run workflow → main** also tests and publishes the image. Pull requests, `dev`, and feature branches only run checks. Docker Compose is used for local previews, not in CI.
 
 Configure these repository Actions settings before the first run:
 
@@ -61,7 +75,7 @@ Configure these repository Actions settings before the first run:
 | Secret | `DOCKERHUB_TOKEN` | Docker Hub token with permission to push to `elmtarkati/portfolio` |
 | Variable | `ENABLE_RENDER_DEPLOY` | `false` until ready to deploy |
 
-The Docker Hub repository `elmtarkati/portfolio` must already exist. Push the workflow changes to `main` to start the first publication. Check the **Sign in to Docker Hub** and **Publish the tested production image** steps in the `docker` job. Their success confirms publication; building locally alone does not publish an image.
+The Docker Hub repository `elmtarkati/portfolio` must already exist. Push the workflow changes to `main` to start publication. Check the **Publish Docker image** job: it logs in, builds the image, then pushes both tags. Its success confirms publication; building locally alone does not publish an image.
 
 ## Render deployment — prepared, not deployed
 
@@ -76,7 +90,7 @@ When ready:
 5. Optionally add required reviewers to the GitHub `production` environment.
 6. Set the Actions variable `ENABLE_RENDER_DEPLOY` to `true` when ready to enable CD. Then merge/push a change to `main`.
 
-The deployment workflow runs only after successful push CI on `main` from this repository, including Docker Hub publication. It passes `docker.io/elmtarkati/portfolio:<tested-commit-sha>` through the hook’s `imgURL` parameter. A successful workflow means Render accepted the request; check the Render dashboard for final build and deployment status. Feature branches, `dev`, and manually dispatched CI runs never deploy. Leave the enable variable unset or `false` to keep deployment disabled.
+The `deploy` job in the same workflow runs only after successful publication on a push to `main`. It passes `docker.io/elmtarkati/portfolio:<tested-commit-sha>` through the hook’s `imgURL` parameter. A successful deploy job means Render accepted the request; check the Render dashboard for final build and deployment status. Feature branches, PRs, `dev`, and manually dispatched runs never deploy. Leave the enable variable unset or `false` to keep deployment disabled.
 
 References: [Render Docker](https://render.com/docs/docker), [Deploy hooks](https://render.com/docs/deploy-hooks), [Blueprint reference](https://render.com/docs/blueprint-spec).
 
