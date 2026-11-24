@@ -20,10 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Trigger deployment of the commit that passed CI
+      - name: Deploy the image published by successful CI
         env:
           DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
           COMMIT_SHA: ${{ github.event.workflow_run.head_sha }}
+          IMAGE: docker.io/elmtarkati/portfolio
         shell: bash
         run: |
           if [ -z "$DEPLOY_HOOK" ]; then
@@ -34,7 +35,7 @@ jobs:
             https://api.render.com/deploy/*) ;;
             *) echo "Expected a Render deploy hook URL."; exit 1 ;;
           esac
-          if [[ "$DEPLOY_HOOK" == *\?* ]]; then separator='&'; else separator='?'; fi
+          image_url="${IMAGE}:${COMMIT_SHA}"
           curl --fail --silent --show-error --output /dev/null --max-time 60 \
-            --request POST "${DEPLOY_HOOK}${separator}ref=${COMMIT_SHA}"
-          echo "Render accepted a deployment request for ${COMMIT_SHA}. Check Render for build and live status."
+            --get --data-urlencode "imgURL=${image_url}" "$DEPLOY_HOOK"
+          echo "Render accepted a deployment request for ${image_url}. Check Render for build and live status."
