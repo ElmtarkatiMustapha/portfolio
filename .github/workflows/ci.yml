@@ -42,7 +42,7 @@ jobs:
       - name: Validate Compose
         run: docker compose config --quiet
       - name: Build and start production container
-        run: docker compose up -d --build web
+        run: docker compose up -d --build --wait --wait-timeout 120 web
       - name: Check health, page, and original artwork
         run: |
           curl --fail --retry 20 --retry-delay 3 --retry-connrefused http://localhost:8080/health
