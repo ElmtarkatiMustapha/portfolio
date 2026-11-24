@@ -8,7 +8,7 @@ export const copy = {
   en: {
     nav: ['Work', 'About', 'Experience', 'Contact'], connect: 'Let’s talk', skip: 'Skip to content',
     eyebrow: 'FULL-STACK DEVELOPER · CASABLANCA, MOROCCO',
-    hero: ['Thoughtful code.', 'Meaningful impact.'],
+    hero: ['Hello World', 'Meaningful impact.'],
     intro: 'I’m Mustapha. I build web experiences that connect considered interfaces with reliable systems. And I help others learn to do the same.',
     workCta: 'Explore my work', contactCta: 'Get in touch', scroll: 'SCROLL TO EXPLORE',
     workLabel: 'SELECTED WORK', workTitle: 'Ideas, brought to life.',
